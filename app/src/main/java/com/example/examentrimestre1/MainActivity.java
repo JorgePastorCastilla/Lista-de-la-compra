@@ -19,7 +19,9 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,15 +45,9 @@ public class MainActivity extends AppCompatActivity{
         SharedPreferences pref = getSharedPreferences(PREFERENCIA_BARRA, MODE_PRIVATE);
 
         String json = pref.getString("items", "paco");
-        List<LinkedTreeMap> obj = gson.fromJson(json, ArrayList.class);
-        for (LinkedTreeMap m: obj
-             ) {
-                int codi = (int) ( (double) m.get("codi") );
-                boolean comprat = (boolean) m.get("comprat");
-                String nom = m.get("nom").toString();
-                String quantitat = m.get("quantitat").toString();
-                items.add(new Item( codi, nom, quantitat,comprat) );
-        }
+        Type type = new TypeToken<ArrayList<Item>>(){}.getType();
+        ArrayList<Item> obj = gson.fromJson(json, type);
+        items = obj;
 
 
 
@@ -93,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
         SharedPreferences pref = getSharedPreferences(PREFERENCIA_BARRA, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         ArrayList<Item> copiaItems = items;
-        editor.putString("items", gson.toJson(copiaItems,ArrayList.class) );
+        editor.putString("items", gson.toJson(copiaItems) );
         editor.commit();
 
     }
